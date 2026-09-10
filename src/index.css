@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --win-gray: #c0c0c0;
+    --win-dark: #808080;
+    --win-darker: #404040;
+    --win-light: #ffffff;
+    --win-blue: #000080;
+    --win-blue-light: #1084d0;
+    --win-teal: #008080;
+    --win-text: #000000;
+
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-mono: 'Space Mono', 'VT323', monospace;
+    --font-vt: 'VT323', monospace;
+    --font-silkscreen: 'Silkscreen', monospace;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Theme variables */
+  body.theme-win95 {
+    --bg-desktop: #008080;
+    --window-bg: #c0c0c0;
+    --window-border-light: #ffffff;
+    --window-border-dark: #808080;
+    --window-border-darker: #000000;
+    --titlebar-active: linear-gradient(90deg, #000080, #1084d0);
+    --titlebar-active-text: #ffffff;
+    --titlebar-inactive: linear-gradient(90deg, #808080, #b5b5b5);
+    --titlebar-inactive-text: #d4d0c8;
+    --btn-face: #c0c0c0;
+    --text-main: #000000;
+    --text-muted: #555555;
+    --inset-bg: #ffffff;
+    --accent-glow: rgba(0, 128, 128, 0.4);
+    --desktop-pattern: radial-gradient(#006666 15%, transparent 16%);
+  }
+
+  body.theme-geocities {
+    --bg-desktop: #070814;
+    --window-bg: #121324;
+    --window-border-light: #00ffff;
+    --window-border-dark: #ff007f;
+    --window-border-darker: #05060f;
+    --titlebar-active: linear-gradient(90deg, #ff007f, #8a2be2, #00f0ff);
+    --titlebar-active-text: #ffffff;
+    --titlebar-inactive: linear-gradient(90deg, #2a2540, #181428);
+    --titlebar-inactive-text: #706590;
+    --btn-face: #1c1d36;
+    --text-main: #00ffcc;
+    --text-muted: #ff77bc;
+    --inset-bg: #090a18;
+    --accent-glow: rgba(0, 255, 255, 0.35);
+    --desktop-pattern: linear-gradient(to right, rgba(255, 0, 127, 0.08) 1px, transparent 1px),
+                       linear-gradient(to bottom, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+  }
+
+  body.theme-macos {
+    --bg-desktop: #6b7280;
+    --window-bg: #dddddd;
+    --window-border-light: #ffffff;
+    --window-border-dark: #888888;
+    --window-border-darker: #222222;
+    --titlebar-active: repeating-linear-gradient(to bottom, #222222 0px, #222222 1px, #dddddd 1px, #dddddd 3px);
+    --titlebar-active-text: #000000;
+    --titlebar-inactive: repeating-linear-gradient(to bottom, #777777 0px, #777777 1px, #dddddd 1px, #dddddd 3px);
+    --titlebar-inactive-text: #666666;
+    --btn-face: #e0e0e0;
+    --text-main: #111111;
+    --text-muted: #555555;
+    --inset-bg: #ffffff;
+    --accent-glow: rgba(0, 0, 0, 0.25);
+    --desktop-pattern: radial-gradient(#555d6b 20%, transparent 20%);
+  }
+
+  body.theme-matrix {
+    --bg-desktop: #020b04;
+    --window-bg: #041407;
+    --window-border-light: #00ff66;
+    --window-border-dark: #005511;
+    --window-border-darker: #002208;
+    --titlebar-active: linear-gradient(90deg, #003311, #008822, #00ff66);
+    --titlebar-active-text: #000000;
+    --titlebar-inactive: linear-gradient(90deg, #021a08, #053310);
+    --titlebar-inactive-text: #00aa33;
+    --btn-face: #07220d;
+    --text-main: #33ff66;
+    --text-muted: #11aa33;
+    --inset-bg: #010802;
+    --accent-glow: rgba(0, 255, 102, 0.4);
+    --desktop-pattern: radial-gradient(#004411 15%, transparent 16%);
+  }
+
+  * {
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  input, textarea, [contenteditable="true"] {
+    user-select: text;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    font-family: var(--font-sans);
+    background-color: var(--bg-desktop);
+    background-image: var(--desktop-pattern);
+    background-size: 24px 24px;
+    color: var(--text-main);
+    transition: background-color 0.3s ease;
+  }
+}
+
+/* 90s Bevel Utilities */
+.bevel-raised {
+  border-top: 2px solid var(--window-border-light);
+  border-left: 2px solid var(--window-border-light);
+  border-right: 2px solid var(--window-border-darker);
+  border-bottom: 2px solid var(--window-border-darker);
+  box-shadow: inset 1px 1px 0px rgba(255,255,255,0.6), inset -1px -1px 0px var(--window-border-dark);
+}
+
+.bevel-sunken {
+  border-top: 2px solid var(--window-border-darker);
+  border-left: 2px solid var(--window-border-darker);
+  border-right: 2px solid var(--window-border-light);
+  border-bottom: 2px solid var(--window-border-light);
+  box-shadow: inset 1px 1px 0px var(--window-border-dark), inset -1px -1px 0px rgba(255,255,255,0.6);
+  background: var(--inset-bg);
+}
+
+.bevel-button {
+  border-top: 2px solid var(--window-border-light);
+  border-left: 2px solid var(--window-border-light);
+  border-right: 2px solid var(--window-border-darker);
+  border-bottom: 2px solid var(--window-border-darker);
+  background-color: var(--btn-face);
+  color: var(--text-main);
+  box-shadow: inset 1px 1px 0px rgba(255,255,255,0.8), inset -1px -1px 0px var(--window-border-dark);
+  cursor: pointer;
+  transition: transform 0.05s ease;
+}
+
+.bevel-button:active, .bevel-button.active {
+  border-top: 2px solid var(--window-border-darker);
+  border-left: 2px solid var(--window-border-darker);
+  border-right: 2px solid var(--window-border-light);
+  border-bottom: 2px solid var(--window-border-light);
+  box-shadow: inset 1px 1px 0px var(--window-border-dark);
+  transform: translate(1px, 1px);
+}
+
+/* Retro Fonts */
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+}
+
+.font-vt {
+  font-family: var(--font-vt), monospace;
+}
+
+.font-silkscreen {
+  font-family: var(--font-silkscreen), monospace;
+}
+
+.font-mono-code {
+  font-family: var(--font-mono), monospace;
+}
+
+/* CRT Scanlines Overlay */
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 3px, 6px 100%;
+}
+
+.crt-vignette {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+}
+
+/* Glowing Neon Text */
+.neon-glow-pink {
+  text-shadow: 0 0 5px #ff007f, 0 0 10px #ff007f, 0 0 20px #ff007f;
+}
+
+.neon-glow-cyan {
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff;
+}
+
+.neon-glow-green {
+  text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14, 0 0 20px #39ff14;
+}
+
+.neon-glow-gold {
+  text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffaa00, 0 0 20px #ff8800;
+}
+
+/* Chrome 3D Metallic Text */
+.text-chrome {
+  background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 25%, #777777 50%, #ffffff 51%, #aaaaaa 75%, #444444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 2px 0px #000) drop-shadow(0 0 8px rgba(0, 255, 255, 0.5));
+}
+
+.text-gold-chrome {
+  background: linear-gradient(180deg, #fff2a3 0%, #ffd700 25%, #cc7700 50%, #fffbe6 51%, #ffbb00 75%, #884400 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 2px 0px #000) drop-shadow(0 0 12px rgba(255, 200, 0, 0.6));
+}
+
+/* Marquee Animation */
+@keyframes marquee-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-scroll 24s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Hazard Stripes */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffe600,
+    #ffe600 12px,
+    #000000 12px,
+    #000000 24px
+  );
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #dfdfdf;
+  border-left: 1px solid #808080;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--btn-face);
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  box-shadow: inset 1px 1px 0px #dfdfdf, inset -1px -1px 0px #808080;
+}
+
+/* 7-Segment LED display style */
+.led-counter {
+  background: #000;
+  color: #ff2222;
+  font-family: var(--font-vt), monospace;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px #ff0000;
+  border: 2px inset #555;
+  padding: 2px 8px;
+}
