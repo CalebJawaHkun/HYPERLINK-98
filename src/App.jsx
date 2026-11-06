@@ -4,8 +4,12 @@ import Taskbar from './components/Taskbar';
 import Window from './components/Window';
 import CrtOverlay from './components/CrtOverlay';
 import ShutdownModal from './components/ShutdownModal';
+import ContextMenu from './components/ContextMenu';
+import DisplayPropertiesModal, { WALLPAPERS } from './components/DisplayPropertiesModal';
 
 import WebExplorer from './components/apps/WebExplorer';
+import MinesweeperApp from './components/apps/MinesweeperApp';
+import IrcChatApp from './components/apps/IrcChatApp';
 import WinPulsePlayer from './components/apps/WinPulsePlayer';
 import CyberInvaders from './components/apps/CyberInvaders';
 import BbsTerminal from './components/apps/BbsTerminal';
@@ -16,14 +20,20 @@ import RecycleBinApp from './components/apps/RecycleBinApp';
 import { soundManager } from './utils/audio';
 
 export default function App() {
-  const [theme, setTheme] = useState('win95');
+  const [theme, setTheme] = useState(() => localStorage.getItem('hyperlink98_theme') || 'win95');
+  const [wallpaper, setWallpaper] = useState(() => localStorage.getItem('hyperlink98_wallpaper') || 'default');
   const [crtEnabled, setCrtEnabled] = useState(true);
   const [soundMuted, setSoundMuted] = useState(false);
   const [activeWindowId, setActiveWindowId] = useState('web-explorer');
-  const [highestZ, setHighestZ] = useState(20);
+  const [highestZ, setHighestZ] = useState(25);
   const [shutdownOpen, setShutdownOpen] = useState(false);
+  const [displayPropertiesOpen, setDisplayPropertiesOpen] = useState(false);
+  const [browserTargetUrl, setBrowserTargetUrl] = useState(null);
 
-  // Window states list
+  // Desktop Context Menu State
+  const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0 });
+
+  // Window states list (HYPERLINK '98 v1.0 suite)
   const [windows, setWindows] = useState([
     {
       id: 'web-explorer',
@@ -32,18 +42,38 @@ export default function App() {
       isOpen: true,
       isMinimized: false,
       zIndex: 15,
-      defaultPos: { x: 90, y: 25 },
-      defaultSize: { width: 880, height: 600 },
+      defaultPos: { x: 80, y: 20 },
+      defaultSize: { width: 880, height: 580 },
+    },
+    {
+      id: 'minesweeper',
+      title: "Minesweeper '98",
+      icon: '💣',
+      isOpen: false,
+      isMinimized: false,
+      zIndex: 16,
+      defaultPos: { x: 260, y: 70 },
+      defaultSize: { width: 440, height: 490 },
+    },
+    {
+      id: 'irc-chat',
+      title: "mIRC '98 [CyberChat Network #cyberspace]",
+      icon: '💬',
+      isOpen: false,
+      isMinimized: false,
+      zIndex: 14,
+      defaultPos: { x: 160, y: 50 },
+      defaultSize: { width: 720, height: 480 },
     },
     {
       id: 'win-pulse',
-      title: "WinPulse '98 Audio Deck",
+      title: "WinPulse '98 Pro Audio Deck & Tracker",
       icon: '📻',
       isOpen: false,
       isMinimized: false,
-      zIndex: 12,
-      defaultPos: { x: 320, y: 60 },
-      defaultSize: { width: 500, height: 440 },
+      zIndex: 13,
+      defaultPos: { x: 300, y: 40 },
+      defaultSize: { width: 560, height: 470 },
     },
     {
       id: 'arcade',
@@ -51,8 +81,8 @@ export default function App() {
       icon: '👾',
       isOpen: false,
       isMinimized: false,
-      zIndex: 13,
-      defaultPos: { x: 260, y: 40 },
+      zIndex: 12,
+      defaultPos: { x: 220, y: 35 },
       defaultSize: { width: 540, height: 500 },
     },
     {
@@ -62,8 +92,8 @@ export default function App() {
       isOpen: false,
       isMinimized: false,
       zIndex: 11,
-      defaultPos: { x: 180, y: 70 },
-      defaultSize: { width: 620, height: 420 },
+      defaultPos: { x: 140, y: 60 },
+      defaultSize: { width: 620, height: 430 },
     },
     {
       id: 'pixel-paint',
@@ -72,7 +102,7 @@ export default function App() {
       isOpen: false,
       isMinimized: false,
       zIndex: 10,
-      defaultPos: { x: 220, y: 50 },
+      defaultPos: { x: 190, y: 45 },
       defaultSize: { width: 680, height: 490 },
     },
     {
@@ -82,7 +112,7 @@ export default function App() {
       isOpen: false,
       isMinimized: false,
       zIndex: 9,
-      defaultPos: { x: 150, y: 80 },
+      defaultPos: { x: 120, y: 70 },
       defaultSize: { width: 560, height: 460 },
     },
     {
@@ -92,7 +122,7 @@ export default function App() {
       isOpen: false,
       isMinimized: false,
       zIndex: 8,
-      defaultPos: { x: 280, y: 120 },
+      defaultPos: { x: 260, y: 110 },
       defaultSize: { width: 520, height: 380 },
     },
   ]);
@@ -113,11 +143,14 @@ export default function App() {
   };
 
   // Open / Launch window
-  const openWindow = (id) => {
+  const openWindow = (id, params = null) => {
     soundManager.playWindowOpen();
     const nextZ = highestZ + 1;
     setHighestZ(nextZ);
     setActiveWindowId(id);
+    if (id === 'web-explorer' && params?.url) {
+      setBrowserTargetUrl({ url: params.url, timestamp: Date.now() });
+    }
     setWindows((prev) =>
       prev.map((w) =>
         w.id === id
@@ -159,8 +192,68 @@ export default function App() {
     }
   };
 
+  // Window cascade helper
+  const cascadeWindows = () => {
+    let offset = 0;
+    setWindows((prev) =>
+      prev.map((w) => {
+        if (!w.isOpen) return w;
+        const pos = { x: 30 + offset * 25, y: 25 + offset * 25 };
+        offset++;
+        return { ...w, defaultPos: pos, isMinimized: false };
+      })
+    );
+  };
+
+  // Window tile horizontally helper
+  const tileWindows = () => {
+    const openWins = windows.filter((w) => w.isOpen && !w.isMinimized);
+    if (openWins.length === 0) return;
+    const tileWidth = Math.floor(window.innerWidth / openWins.length);
+
+    let idx = 0;
+    setWindows((prev) =>
+      prev.map((w) => {
+        if (!w.isOpen || w.isMinimized) return w;
+        const currentIdx = idx++;
+        return {
+          ...w,
+          defaultPos: { x: currentIdx * tileWidth, y: 10 },
+          defaultSize: { width: tileWidth - 5, height: window.innerHeight - 60 },
+        };
+      })
+    );
+  };
+
+  // Minimize all windows helper
+  const minimizeAllWindows = () => {
+    setWindows((prev) => prev.map((w) => ({ ...w, isMinimized: true })));
+  };
+
+  // Right-click desktop context menu handler
+  const handleContextMenu = (e) => {
+    if (e.target.closest('.bevel-raised') || e.target.closest('button') || e.target.closest('input')) {
+      return;
+    }
+    e.preventDefault();
+    soundManager.playClick();
+    setContextMenu({ isOpen: true, x: e.clientX, y: e.clientY });
+  };
+
+  const activeWpObj = WALLPAPERS.find((w) => w.id === wallpaper) || WALLPAPERS[0];
+
   return (
-    <div className="relative w-screen h-screen overflow-hidden select-none bg-[var(--bg-desktop)]">
+    <div
+      onContextMenu={handleContextMenu}
+      onClick={() => {
+        if (contextMenu.isOpen) setContextMenu({ isOpen: false, x: 0, y: 0 });
+      }}
+      style={{
+        backgroundColor: activeWpObj.bg.startsWith('var') ? undefined : activeWpObj.bg,
+        backgroundImage: activeWpObj.pattern !== 'none' && !activeWpObj.pattern.startsWith('var') ? activeWpObj.pattern : undefined,
+      }}
+      className="relative w-screen h-screen overflow-hidden select-none bg-[var(--bg-desktop)]"
+    >
       {/* CRT Scanline and Vignette Filter */}
       <CrtOverlay enabled={crtEnabled} />
 
@@ -170,14 +263,14 @@ export default function App() {
           HYPERLINK '98
         </div>
         <div className="font-mono text-xs text-white tracking-widest mt-1">
-          CYBERSPACE EDITION &bull; REACT 19
+          v1.0 CYBERSPACE RELEASE &bull; REACT 19
         </div>
       </div>
 
       {/* Desktop Shortcut Icons Grid */}
       <DesktopIcons onOpenApp={openWindow} />
 
-      {/* 1. Main Web Explorer Cyberspace Portal Window */}
+      {/* 1. Web Explorer Cyberspace Portal Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'web-explorer');
         return (
@@ -195,12 +288,58 @@ export default function App() {
             onMinimize={() => minimizeWindow(win.id)}
             onFocus={() => focusWindow(win.id)}
           >
-            <WebExplorer onLaunchApp={openWindow} />
+            <WebExplorer onLaunchApp={openWindow} targetUrlRequest={browserTargetUrl} />
           </Window>
         );
       })()}
 
-      {/* 2. WinPulse '98 Chiptune Media Player Window */}
+      {/* 2. Cyber Minesweeper '98 Window */}
+      {(() => {
+        const win = windows.find((w) => w.id === 'minesweeper');
+        return (
+          <Window
+            id={win.id}
+            title={win.title}
+            icon={win.icon}
+            isOpen={win.isOpen}
+            isMinimized={win.isMinimized}
+            isActive={activeWindowId === win.id}
+            zIndex={win.zIndex}
+            defaultPos={win.defaultPos}
+            defaultSize={win.defaultSize}
+            onClose={() => closeWindow(win.id)}
+            onMinimize={() => minimizeWindow(win.id)}
+            onFocus={() => focusWindow(win.id)}
+          >
+            <MinesweeperApp />
+          </Window>
+        );
+      })()}
+
+      {/* 3. mIRC '98 CyberChat Window */}
+      {(() => {
+        const win = windows.find((w) => w.id === 'irc-chat');
+        return (
+          <Window
+            id={win.id}
+            title={win.title}
+            icon={win.icon}
+            isOpen={win.isOpen}
+            isMinimized={win.isMinimized}
+            isActive={activeWindowId === win.id}
+            zIndex={win.zIndex}
+            defaultPos={win.defaultPos}
+            defaultSize={win.defaultSize}
+            onClose={() => closeWindow(win.id)}
+            onMinimize={() => minimizeWindow(win.id)}
+            onFocus={() => focusWindow(win.id)}
+          >
+            <IrcChatApp />
+          </Window>
+        );
+      })()}
+
+      {/* 4. WinPulse '98 Pro Audio & Tracker Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'win-pulse');
         return (
@@ -223,7 +362,7 @@ export default function App() {
         );
       })()}
 
-      {/* 3. Cyber Invaders Arcade Game Window */}
+      {/* 5. Cyber Invaders Arcade Game Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'arcade');
         return (
@@ -246,7 +385,7 @@ export default function App() {
         );
       })()}
 
-      {/* 4. BBS Cyber-Terminal MS-DOS Window */}
+      {/* 6. BBS Cyber-Terminal MS-DOS Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'terminal');
         return (
@@ -269,7 +408,7 @@ export default function App() {
         );
       })()}
 
-      {/* 5. PixelPaint '98 Studio Window */}
+      {/* 7. PixelPaint '98 Studio Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'pixel-paint');
         return (
@@ -292,7 +431,7 @@ export default function App() {
         );
       })()}
 
-      {/* 6. README.TXT Manual Window */}
+      {/* 8. README.TXT Manual Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'readme');
         return (
@@ -315,7 +454,7 @@ export default function App() {
         );
       })()}
 
-      {/* 7. Recycle Bin Window */}
+      {/* 9. Recycle Bin Window */}
       {(() => {
         const win = windows.find((w) => w.id === 'recycle');
         return (
@@ -351,6 +490,34 @@ export default function App() {
         soundMuted={soundMuted}
         setSoundMuted={setSoundMuted}
         onTriggerShutdown={() => setShutdownOpen(true)}
+        onOpenDisplayProperties={() => setDisplayPropertiesOpen(true)}
+      />
+
+      {/* Desktop Right-Click Context Menu */}
+      <ContextMenu
+        x={contextMenu.x}
+        y={contextMenu.y}
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ isOpen: false, x: 0, y: 0 })}
+        onOpenDisplayProperties={() => setDisplayPropertiesOpen(true)}
+        onCascadeWindows={cascadeWindows}
+        onTileWindows={tileWindows}
+        onMinimizeAll={minimizeAllWindows}
+        onOpenApp={openWindow}
+      />
+
+      {/* Display Properties Settings Dialog */}
+      <DisplayPropertiesModal
+        isOpen={displayPropertiesOpen}
+        onClose={() => setDisplayPropertiesOpen(false)}
+        currentWallpaper={wallpaper}
+        setWallpaper={setWallpaper}
+        theme={theme}
+        setTheme={setTheme}
+        crtEnabled={crtEnabled}
+        setCrtEnabled={setCrtEnabled}
+        soundMuted={soundMuted}
+        setSoundMuted={setSoundMuted}
       />
 
       {/* Shutdown Cyberspace Dialog Modal */}

@@ -1,7 +1,7 @@
 {
-  "name": "80s_estatics",
+  "name": "hyperlink-98",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -3,6 +3,9 @@ import { soundManager } from '../utils/audio';
 
 const DESKTOP_ITEMS = [
   { id: 'web-explorer', title: 'Web Explorer', icon: '🌐', subtitle: 'Cyber Portal' },
+  { id: '80s-archives', title: '80s Net Hub', icon: '💾', subtitle: 'Telecomputing' },
+  { id: 'minesweeper', title: 'Minesweeper', icon: '💣', subtitle: '90s Puzzle' },
+  { id: 'irc-chat', title: 'CyberChat', icon: '💬', subtitle: 'mIRC Network' },
   { id: 'win-pulse', title: 'WinPulse 98', icon: '📻', subtitle: 'Chiptune Media' },
   { id: 'arcade', title: 'Cyber Invaders', icon: '👾', subtitle: 'Arcade Game' },
   { id: 'terminal', title: 'BBS Terminal', icon: '💻', subtitle: 'MS-DOS Shell' },
@@ -21,11 +24,15 @@ export default function DesktopIcons({ onOpenApp }) {
 
   const handleLaunch = (id) => {
     soundManager.playWindowOpen();
-    onOpenApp(id);
+    if (id === '80s-archives') {
+      onOpenApp('web-explorer', { url: 'http://www.hyperlink98.net/80s-telecomputing.htm' });
+    } else {
+      onOpenApp(id);
+    }
   };
 
   return (
-    <div className="absolute top-4 left-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4 z-0 pointer-events-auto select-none">
+    <div className="absolute top-4 left-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3.5 z-0 pointer-events-auto select-none max-h-[85vh] overflow-y-auto">
       {DESKTOP_ITEMS.map((item) => {
         const isSelected = selectedId === item.id;
         return (
@@ -33,7 +40,7 @@ export default function DesktopIcons({ onOpenApp }) {
             key={item.id}
             onClick={() => handleSelect(item.id)}
             onDoubleClick={() => handleLaunch(item.id)}
-            className={`w-20 p-2 flex flex-col items-center justify-center text-center cursor-pointer transition-colors rounded-none group ${
+            className={`w-20 p-1.5 flex flex-col items-center justify-center text-center cursor-pointer transition-colors rounded-none group ${
               isSelected
                 ? 'bg-blue-600/50 border border-dotted border-white text-white shadow-lg'
                 : 'hover:bg-white/10 text-white'
@@ -46,7 +53,7 @@ export default function DesktopIcons({ onOpenApp }) {
 
             {/* Title */}
             <span
-              className={`font-pixel text-[10px] leading-tight px-1 py-0.5 max-w-full truncate ${
+              className={`font-pixel text-[9px] leading-tight px-1 py-0.5 max-w-full truncate ${
                 isSelected ? 'bg-[#000080] text-white' : 'text-white drop-shadow-[1px_1px_2px_#000]'
               }`}
             >
@@ -60,7 +67,7 @@ export default function DesktopIcons({ onOpenApp }) {
                 e.stopPropagation();
                 handleLaunch(item.id);
               }}
-              className="mt-1 text-[9px] bg-black/75 text-cyan-300 px-1 py-0.5 rounded md:hidden border border-cyan-500/40"
+              className="mt-1 text-[8px] bg-black/75 text-cyan-300 px-1 py-0.5 rounded md:hidden border border-cyan-500/40"
             >
               Open
             </button>

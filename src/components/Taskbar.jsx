@@ -14,6 +14,7 @@ export default function Taskbar({
   soundMuted,
   setSoundMuted,
   onTriggerShutdown,
+  onOpenDisplayProperties,
 }) {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [time, setTime] = useState('');
@@ -63,10 +64,10 @@ export default function Taskbar({
     setStartMenuOpen(!startMenuOpen);
   };
 
-  const handleAppLaunch = (appId) => {
+  const handleAppLaunch = (appId, params = null) => {
     soundManager.playClick();
     setStartMenuOpen(false);
-    onOpenWindow(appId);
+    onOpenWindow(appId, params);
   };
 
   return (
@@ -100,13 +101,13 @@ export default function Taskbar({
               </div>
 
               {/* Menu List */}
-              <div className="flex-1 py-1.5 px-1 flex flex-col gap-1 text-xs">
+              <div className="flex-1 py-1.5 px-1 flex flex-col gap-0.5 text-xs max-h-[80vh] overflow-y-auto">
                 <button
                   type="button"
                   onClick={() => handleAppLaunch('web-explorer')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
                 >
-                  <span className="text-lg">🌐</span>
+                  <span className="text-base">🌐</span>
                   <div>
                     <div className="font-bold">Web Explorer '98</div>
                     <div className="text-[10px] opacity-75">Cyberspace Portal & Webring</div>
@@ -115,22 +116,58 @@ export default function Taskbar({
 
                 <button
                   type="button"
-                  onClick={() => handleAppLaunch('win-pulse')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  onClick={() => handleAppLaunch('web-explorer', { url: 'http://www.hyperlink98.net/80s-telecomputing.htm' })}
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full border-b border-gray-400/30"
                 >
-                  <span className="text-lg">📻</span>
+                  <span className="text-base">💾</span>
                   <div>
-                    <div className="font-bold">WinPulse '98 Media</div>
-                    <div className="text-[10px] opacity-75">Chiptune & Visualizer</div>
+                    <div className="font-bold text-amber-900 font-pixel text-[10px]">80s Telecomputing Hub</div>
+                    <div className="text-[10px] opacity-75">CompuServe, Q-Link, The WELL, CERN</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleAppLaunch('minesweeper')}
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                >
+                  <span className="text-base">💣</span>
+                  <div>
+                    <div className="font-bold">Minesweeper '98</div>
+                    <div className="text-[10px] opacity-75">Classic Retro Puzzle</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleAppLaunch('irc-chat')}
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                >
+                  <span className="text-base">💬</span>
+                  <div>
+                    <div className="font-bold">CyberChat IRC '98</div>
+                    <div className="text-[10px] opacity-75">mIRC Cyberspace Rooms</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleAppLaunch('win-pulse')}
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                >
+                  <span className="text-base">📻</span>
+                  <div>
+                    <div className="font-bold">WinPulse '98 Pro</div>
+                    <div className="text-[10px] opacity-75">Chiptunes & Beat Tracker</div>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleAppLaunch('arcade')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
                 >
-                  <span className="text-lg">👾</span>
+                  <span className="text-base">👾</span>
                   <div>
                     <div className="font-bold">Cyber Invaders Arcade</div>
                     <div className="text-[10px] opacity-75">8-Bit Space Minigame</div>
@@ -140,9 +177,9 @@ export default function Taskbar({
                 <button
                   type="button"
                   onClick={() => handleAppLaunch('terminal')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
                 >
-                  <span className="text-lg">💻</span>
+                  <span className="text-base">💻</span>
                   <div>
                     <div className="font-bold">BBS Cyber-Terminal</div>
                     <div className="text-[10px] opacity-75">VT100 MS-DOS Shell</div>
@@ -152,9 +189,9 @@ export default function Taskbar({
                 <button
                   type="button"
                   onClick={() => handleAppLaunch('pixel-paint')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
                 >
-                  <span className="text-lg">🎨</span>
+                  <span className="text-base">🎨</span>
                   <div>
                     <div className="font-bold">PixelPaint '98</div>
                     <div className="text-[10px] opacity-75">Retro Canvas Studio</div>
@@ -164,16 +201,28 @@ export default function Taskbar({
                 <button
                   type="button"
                   onClick={() => handleAppLaunch('readme')}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
                 >
-                  <span className="text-lg">📖</span>
+                  <span className="text-base">📖</span>
                   <div>
                     <div className="font-bold">Cyberspace Guide</div>
                     <div className="text-[10px] opacity-75">README.TXT</div>
                   </div>
                 </button>
 
-                <div className="h-[1px] bg-gray-400 my-1 mx-1"></div>
+                <div className="h-[1px] bg-gray-400 my-1 mx-1" />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStartMenuOpen(false);
+                    onOpenDisplayProperties?.();
+                  }}
+                  className="flex items-center gap-2 px-2 py-1 hover:bg-[#000080] hover:text-white text-left rounded-none w-full"
+                >
+                  <span className="text-base">🖼️</span>
+                  <span>Display Settings...</span>
+                </button>
 
                 <button
                   type="button"
@@ -181,9 +230,9 @@ export default function Taskbar({
                     setStartMenuOpen(false);
                     onTriggerShutdown();
                   }}
-                  className="flex items-center gap-2.5 px-2 py-1.5 hover:bg-red-700 hover:text-white text-left rounded-none w-full font-bold"
+                  className="flex items-center gap-2 px-2 py-1 hover:bg-red-700 hover:text-white text-left rounded-none w-full font-bold"
                 >
-                  <span className="text-lg">🔌</span>
+                  <span className="text-base">🔌</span>
                   <span>Shut Down Cyberspace...</span>
                 </button>
               </div>
@@ -206,7 +255,7 @@ export default function Taskbar({
                   soundManager.playClick();
                   onToggleWindow(win.id);
                 }}
-                className={`bevel-button h-8 px-2 min-w-[110px] max-w-[160px] truncate flex items-center gap-1.5 text-xs ${
+                className={`bevel-button h-8 px-2 min-w-[100px] max-w-[150px] truncate flex items-center gap-1.5 text-xs ${
                   isCurrentActive ? 'active font-bold' : 'opacity-85'
                 }`}
                 title={win.title}

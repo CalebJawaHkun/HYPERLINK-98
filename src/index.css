@@ -281,3 +281,47 @@
   border: 2px inset #555;
   padding: 2px 8px;
 }
+
+
+/* 1980s Commodore 64 Theme Utilities */
+.c64-frame {
+  background-color: #4044b4;
+  border: 18px solid #8488e0;
+}
+
+.c64-inner {
+  background-color: #4044b4;
+  color: #8488e0;
+  font-family: var(--font-pixel), monospace;
+}
+
+.c64-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 12px;
+  background-color: #8488e0;
+  animation: c64-blink 0.7s infinite step-start;
+  vertical-align: middle;
+}
+
+@keyframes c64-blink {
+  50% { opacity: 0; }
+}
+
+/* 1980s Videotex / Minitel / CompuServe styling */
+.videotex-box {
+  background: #000080;
+  color: #ffff00;
+  border: 3px double #ffffff;
+}
+
+/* 1980s Terminal Streaming Cursor */
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background-color: #33ff33;
+  animation: c64-blink 0.6s infinite step-start;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+}
